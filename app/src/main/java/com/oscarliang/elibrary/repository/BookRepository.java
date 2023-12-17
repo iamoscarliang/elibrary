@@ -94,11 +94,10 @@ public class BookRepository {
                         allBooks.addAll(books);
                         mMediatorBooksLiveData.setValue(allBooks);
                     }
-                    checkQueryExhausted(books);
-                } else {
-                    // search database cache
-                    checkQueryExhausted(null);
                 }
+
+                // Check is query exhausted
+                checkQueryExhausted(books);
             }
         });
     }
