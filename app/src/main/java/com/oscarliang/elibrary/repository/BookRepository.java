@@ -1,12 +1,17 @@
 package com.oscarliang.elibrary.repository;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
+import android.app.Application;
 
+import androidx.lifecycle.LiveData;
+
+import com.oscarliang.elibrary.AppExecutors;
+import com.oscarliang.elibrary.api.ApiResponse;
+import com.oscarliang.elibrary.api.BookResponse;
+import com.oscarliang.elibrary.api.ServiceGenerator;
+import com.oscarliang.elibrary.db.BookDao;
+import com.oscarliang.elibrary.db.BookDatabase;
 import com.oscarliang.elibrary.model.Book;
-import com.oscarliang.elibrary.api.BookServiceClient;
+import com.oscarliang.elibrary.vo.Resource;
 
 import java.util.List;
 
@@ -14,30 +19,24 @@ public class BookRepository {
 
     private static BookRepository INSTANCE;
 
-    private final BookServiceClient mApiClient;
-
-    private String mQuery;
-    private int mMaxResults;
-    private int mStartIndex;
-
-    private final MutableLiveData<Boolean> mIsQueryExhaustedLiveData = new MutableLiveData<>();
-    private final MediatorLiveData<List<Book>> mMediatorBooksLiveData = new MediatorLiveData<>();
+    private final BookDao mDao;
+    private final AppExecutors mExecutors;
 
     //--------------------------------------------------------
     // Constructors
     //--------------------------------------------------------
-    private BookRepository() {
-        mApiClient = BookServiceClient.getInstance();
-        initMediators();
+    private BookRepository(Application application) {
+        mDao = BookDatabase.getInstance(application).getBookDao();
+        mExecutors = AppExecutors.getInstance();
     }
     //========================================================
 
     //--------------------------------------------------------
     // Static methods
     //--------------------------------------------------------
-    public static BookRepository getInstance() {
+    public static BookRepository getInstance(Application application) {
         if (INSTANCE == null) {
-            INSTANCE = new BookRepository();
+            INSTANCE = new BookRepository(application);
         }
 
         return INSTANCE;
@@ -45,71 +44,37 @@ public class BookRepository {
     //========================================================
 
     //--------------------------------------------------------
-    // Getter and Setter
-    //--------------------------------------------------------
-    public LiveData<List<Book>> getBooksLiveData() {
-        return mMediatorBooksLiveData;
-    }
-
-    public LiveData<Boolean> getQueryExhaustedLiveData() {
-        return mIsQueryExhaustedLiveData;
-    }
-    //========================================================
-
-    //--------------------------------------------------------
     // Methods
     //--------------------------------------------------------
-    public void searchBooks(String query, int maxResults, int startIndex) {
-        mQuery = query;
-        mMaxResults = maxResults;
-        mStartIndex = startIndex;
-        mIsQueryExhaustedLiveData.setValue(false);
-        mApiClient.searchBooksApi(query, maxResults, startIndex);
-    }
-
-    public void searchNextPageBooks() {
-        searchBooks(mQuery, mMaxResults, mStartIndex + mMaxResults);
-    }
-
-    public void cancelSearchBooks(){
-        mApiClient.cancelSearchBooksApi();
-        if (mMediatorBooksLiveData.getValue() != null) {
-            mMediatorBooksLiveData.getValue().clear();
-        }
-    }
-
-    private void initMediators() {
-        LiveData<List<Book>> booksSource = mApiClient.getBooksLiveData();
-        mMediatorBooksLiveData.addSource(booksSource, new Observer<List<Book>>() {
+    public LiveData<Resource<List<Book>>> searchBooks(String query, int maxResults, int page) {
+        return new NetworkBoundResource<List<Book>, BookResponse>(mExecutors) {
             @Override
-            public void onChanged(List<Book> books) {
+            protected void saveCallResult(BookResponse item) {
+                List<Book> books = item.getBooks();
                 if (books != null) {
-                    // Check is book already existed
-                    if (mMediatorBooksLiveData.getValue() == null) {
-                        // Add the new books
-                        mMediatorBooksLiveData.setValue(books);
-                    } else {
-                        // Append the new books
-                        List<Book> allBooks = mMediatorBooksLiveData.getValue();
-                        allBooks.addAll(books);
-                        mMediatorBooksLiveData.setValue(allBooks);
+                    for (Book b : books) {
+                        b.setCategory(query);
                     }
+                    mDao.insertBooks(books);
                 }
-
-                // Check is query exhausted
-                checkQueryExhausted(books);
             }
-        });
-    }
 
-    private void checkQueryExhausted(List<Book> books) {
-        if (books != null) {
-            if (books.size() < 10) {
-                mIsQueryExhaustedLiveData.setValue(true);
+            @Override
+            protected boolean shouldFetch(List<Book> data) {
+                return data.size() < maxResults * page;
             }
-        } else {
-            mIsQueryExhaustedLiveData.setValue(true);
-        }
+
+            @Override
+            protected LiveData<List<Book>> loadFromDb() {
+                return mDao.searchBooks(query, maxResults * page);
+            }
+
+            @Override
+            protected LiveData<ApiResponse<BookResponse>> createCall() {
+                return ServiceGenerator.getBookService()
+                        .searchBook(query, String.valueOf(maxResults), String.valueOf(maxResults * (page - 1)));
+            }
+        }.getLiveData();
     }
     //========================================================
 

@@ -1,26 +1,23 @@
-package com.oscarliang.elibrary.ui.fragment;
+package com.oscarliang.elibrary.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.Toast;
 
-import androidx.core.app.ActivityOptionsCompat;
-import androidx.core.view.ViewCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.oscarliang.elibrary.ui.activity.BookActivity;
 import com.oscarliang.elibrary.R;
 import com.oscarliang.elibrary.adapter.BookAdapter;
 import com.oscarliang.elibrary.model.Book;
 import com.oscarliang.elibrary.viewmodel.BookViewModel;
+import com.oscarliang.elibrary.vo.Resource;
 
 import java.util.List;
 
@@ -92,23 +89,19 @@ public class BookFragment extends BaseFragment implements BookAdapter.OnBookClic
     @Override
     public boolean onBackPressed() {
         // Cancel the search request
-        mViewModel.cancelSearchBooks();
         getMainActivity().showProgressBar(false);
         Log.d("test", "Back pressed!");
         return super.onBackPressed();
     }
 
     @Override
-    public void onBookClick(BookAdapter.BookViewHolder holder) {
-        // Navigate to BookActivity
-        Intent intent = new Intent(getContext(), BookActivity.class);
-        intent.putExtra("book", mViewModel.getBooksLiveData().getValue().get(holder.getAdapterPosition()));
-
-        // Init share element transition animation
-        ImageView imageBook = holder.itemView.findViewById(R.id.image_book);
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
-                imageBook, ViewCompat.getTransitionName(imageBook));
-        startActivity(intent, options.toBundle());
+    public void onBookClick(Book book) {
+        getMainActivity().navigateToFragment(BookDetailFragment.newInstance(book),
+                R.anim.slide_in,  // enter
+                R.anim.fade_out,  // exit
+                R.anim.fade_in,   // popEnter
+                R.anim.slide_out  // popExit
+        );
     }
     //========================================================
 
@@ -123,12 +116,9 @@ public class BookFragment extends BaseFragment implements BookAdapter.OnBookClic
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 // Check is scroll to bottom
-                if (!mRecyclerView.canScrollVertically(1)
-                        && !mViewModel.isPerformingQuery()
-                        && !mViewModel.getQueryExhaustedLiveData().getValue()) {
+                if (!mRecyclerView.canScrollVertically(1)) {
                     // Load next page
                     displayNextPage();
-                    Log.d("test", "Load next page!");
                 }
             }
         });
@@ -139,7 +129,6 @@ public class BookFragment extends BaseFragment implements BookAdapter.OnBookClic
             @Override
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(false);
-                mViewModel.cancelSearchBooks();
                 mAdapter.clearBooks();
                 displayBooks();
                 Log.d("test", "Refresh!");
@@ -148,40 +137,36 @@ public class BookFragment extends BaseFragment implements BookAdapter.OnBookClic
     }
 
     private void subscribeObservers() {
-        mViewModel.getBooksLiveData().observe(this, new Observer<List<Book>>() {
+        mViewModel.getResults().observe(getViewLifecycleOwner(), new Observer<Resource<List<Book>>>() {
             @Override
-            public void onChanged(List<Book> books) {
-                if (books != null && !books.isEmpty()) {
-                    mViewModel.setPerformingQuery(false);
-                    mAdapter.displayBooks(books);
-                    getMainActivity().showProgressBar(false);
-                }
-                Log.d("test", "Books added " + (books != null ? books.size() : 0));
-            }
-        });
-
-        mViewModel.getQueryExhaustedLiveData().observe(this, new Observer<Boolean>() {
-            @Override
-            public void onChanged(Boolean isQueryExhausted) {
-                if (isQueryExhausted) {
-                    mViewModel.setPerformingQuery(false);
-                    mAdapter.displayExhausted();
-                    getMainActivity().showProgressBar(false);
-                    Log.d("test", "Books exhausted!");
+            public void onChanged(Resource<List<Book>> listResource) {
+                switch (listResource.mState) {
+                    case SUCCESS:
+                        mAdapter.displayBooks(listResource.mData);
+                        getMainActivity().showProgressBar(false);
+                        break;
+                    case ERROR:
+                        mAdapter.displayError();
+                        getMainActivity().showProgressBar(false);
+                        Toast.makeText(getContext(), "No network connection!", Toast.LENGTH_SHORT).show();
+                        break;
+                    case LOADING:
+                        // Ignore
+                        break;
                 }
             }
         });
     }
 
     private void displayBooks() {
-        getMainActivity().showProgressBar(true);
         // Display the first page when first search
-        mViewModel.searchBooks(mQuery, 10, 0);
+        mViewModel.setQuery(mQuery, 10, 1);
+        getMainActivity().showProgressBar(true);
     }
 
     private void displayNextPage() {
         // Display and append the next page
-        mViewModel.searchNextPageBooks();
+        mViewModel.loadNextPage();
     }
     //========================================================
 

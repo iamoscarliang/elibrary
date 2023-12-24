@@ -3,9 +3,13 @@ package com.oscarliang.elibrary.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+@Entity(tableName = "image_links")
 public class ImageLinks implements Parcelable {
 
     public static final Creator<ImageLinks> CREATOR = new Creator<ImageLinks>() {
@@ -20,6 +24,7 @@ public class ImageLinks implements Parcelable {
         }
     };
 
+    @ColumnInfo(name = "thumbnail")
     @SerializedName("thumbnail")
     @Expose
     private String mThumbnail;

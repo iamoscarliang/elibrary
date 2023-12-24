@@ -1,14 +1,14 @@
-package com.oscarliang.elibrary.ui.activity;
+package com.oscarliang.elibrary.ui;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -17,7 +17,11 @@ import com.oscarliang.elibrary.model.Book;
 
 import java.util.List;
 
-public class BookActivity extends AppCompatActivity {
+public class BookDetailFragment extends BaseFragment {
+
+    private static final String BOOK_PARAM = "book_param";
+
+    private Book mBook;
 
     private ImageView mImageBook;
     private TextView mTextTitle;
@@ -33,29 +37,60 @@ public class BookActivity extends AppCompatActivity {
     private Button mBtnInfo;
 
     //--------------------------------------------------------
+    // Constructors
+    //--------------------------------------------------------
+    public BookDetailFragment() {
+        // Required empty public constructor
+    }
+    //========================================================
+
+    //--------------------------------------------------------
+    // Static methods
+    //--------------------------------------------------------
+    public static BookDetailFragment newInstance(Book book) {
+        BookDetailFragment fragment = new BookDetailFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(BOOK_PARAM, book);
+        fragment.setArguments(args);
+        return fragment;
+    }
+    //========================================================
+
+    //--------------------------------------------------------
     // Overriding methods
     //--------------------------------------------------------
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_book);
-        mImageBook = (ImageView) findViewById(R.id.image_book);
-        mTextTitle = (TextView) findViewById(R.id.text_title);
-        mTextSubtitle = (TextView) findViewById(R.id.text_subtitle);
-        mTextAuthor = (TextView) findViewById(R.id.text_author);
-        mTextPublisher = (TextView) findViewById(R.id.text_publisher);
-        mTextPublishedDate = (TextView) findViewById(R.id.text_published_date);
-        mTextRating = (TextView) findViewById(R.id.text_rating);
-        mTextRatingCount = (TextView) findViewById(R.id.text_rating_count);
-        mTextPageCount = (TextView) findViewById(R.id.text_page_count);
-        mTextDescription = (TextView) findViewById(R.id.text_description);
-        mBtnPreview = (Button) findViewById(R.id.btn_preview);
-        mBtnInfo = (Button) findViewById(R.id.btn_info);
-
-        if (getIntent().hasExtra("book")) {
-            Book book = getIntent().getParcelableExtra("book");
-            initBook(book);
+        if (getArguments() != null) {
+            mBook = getArguments().getParcelable(BOOK_PARAM);
         }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_book_detail, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mImageBook = (ImageView) view.findViewById(R.id.image_book);
+        mTextTitle = (TextView) view.findViewById(R.id.text_title);
+        mTextSubtitle = (TextView) view.findViewById(R.id.text_subtitle);
+        mTextAuthor = (TextView) view.findViewById(R.id.text_author);
+        mTextPublisher = (TextView) view.findViewById(R.id.text_publisher);
+        mTextPublishedDate = (TextView) view.findViewById(R.id.text_published_date);
+        mTextRating = (TextView) view.findViewById(R.id.text_rating);
+        mTextRatingCount = (TextView) view.findViewById(R.id.text_rating_count);
+        mTextPageCount = (TextView) view.findViewById(R.id.text_page_count);
+        mTextDescription = (TextView) view.findViewById(R.id.text_description);
+        mBtnPreview = (Button) view.findViewById(R.id.btn_preview);
+        mBtnInfo = (Button) view.findViewById(R.id.btn_info);
+
+        initBook(mBook);
     }
     //========================================================
 

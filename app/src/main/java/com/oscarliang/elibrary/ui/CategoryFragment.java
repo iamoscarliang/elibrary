@@ -1,4 +1,4 @@
-package com.oscarliang.elibrary.ui.fragment;
+package com.oscarliang.elibrary.ui;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -7,17 +7,19 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.oscarliang.elibrary.R;
 import com.oscarliang.elibrary.adapter.CategoryAdapter;
+import com.oscarliang.elibrary.model.Category;
 
 public class CategoryFragment extends BaseFragment implements CategoryAdapter.OnCategoryClickListener {
 
+    private SearchView mSearchView;
     private RecyclerView mRecyclerView;
     private CategoryAdapter mAdapter;
 
@@ -42,21 +44,15 @@ public class CategoryFragment extends BaseFragment implements CategoryAdapter.On
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mSearchView = (SearchView) view.findViewById(R.id.search_view);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycle_view_category);
+        initSearchView();
         initRecyclerView();
     }
 
-    private void initRecyclerView() {
-        mAdapter = new CategoryAdapter(this);
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-    }
-
     @Override
-    public void onCategoryClick(CategoryAdapter.CategoryViewHolder holder) {
-        TextView textCategory = holder.itemView.findViewById(R.id.text_category);
-        String query = "subject:" + textCategory.getText().toString();
-        getMainActivity().navigateToFragment(BookFragment.newInstance(query));
+    public void onCategoryClick(Category category) {
+        showSearchFragment(category.getName());
     }
 
     @Override
@@ -69,6 +65,32 @@ public class CategoryFragment extends BaseFragment implements CategoryAdapter.On
     //--------------------------------------------------------
     // Methods
     //--------------------------------------------------------
+    private void initSearchView() {
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                showSearchFragment(query);
+                mSearchView.clearFocus();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+    }
+
+    private void initRecyclerView() {
+        mAdapter = new CategoryAdapter(this);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+    }
+
+    private void showSearchFragment(String query) {
+        getMainActivity().navigateToFragment(BookFragment.newInstance(query));
+    }
+
     private void showExitDialog() {
         new ExitDialogFragment().show(getActivity().getSupportFragmentManager(), null);
     }

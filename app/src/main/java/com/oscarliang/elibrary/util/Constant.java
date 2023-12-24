@@ -6,14 +6,23 @@ public class Constant {
 
     public static final String BASE_URL = "https://www.googleapis.com";
 
-    public static final long NETWORK_TIMEOUT = 3000;
-
     public static final String[] DEFAULT_SEARCH_CATEGORIES =
-            {"Art & Music", "Business", "Computer", "Cooking", "Education", "Fiction", "History", "Horror", "Literature", "Romance"};
+            {
+                    "Art",
+                    "Business",
+                    "Computer",
+                    "Cooking",
+                    "Education",
+                    "Fiction",
+                    "History",
+                    "Horror",
+                    "Literature",
+                    "Romance"
+            };
 
     public static final int[] DEFAULT_SEARCH_CATEGORY_IMAGES =
             {
-                    R.drawable.ic_art_music,
+                    R.drawable.ic_art,
                     R.drawable.ic_business,
                     R.drawable.ic_computer,
                     R.drawable.ic_cooking,

@@ -67,7 +67,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     //--------------------------------------------------------
     // Inner Classes
     //--------------------------------------------------------
-    public static class CategoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class CategoryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final OnCategoryClickListener mOnCategoryClickListener;
         private final ImageView mImageCategory;
@@ -90,7 +90,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         //--------------------------------------------------------
         @Override
         public void onClick(View view) {
-            mOnCategoryClickListener.onCategoryClick(this);
+            mOnCategoryClickListener.onCategoryClick(mCategories.get(getAdapterPosition()));
         }
         //========================================================
 
@@ -98,7 +98,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
     public interface OnCategoryClickListener {
 
-        void onCategoryClick(CategoryViewHolder holder);
+        void onCategoryClick(Category category);
 
     }
     //========================================================

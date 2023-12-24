@@ -3,11 +3,18 @@ package com.oscarliang.elibrary.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.TypeConverters;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.oscarliang.elibrary.db.BookConverter;
 
 import java.util.List;
 
+@Entity(tableName = "volume_info")
 public class VolumeInfo implements Parcelable {
 
     public static final Creator<VolumeInfo> CREATOR = new Creator<VolumeInfo>() {
@@ -22,50 +29,63 @@ public class VolumeInfo implements Parcelable {
         }
     };
 
+    @ColumnInfo(name = "title")
     @SerializedName("title")
     @Expose
     private String mTitle;
 
+    @ColumnInfo(name = "subtitle")
     @SerializedName("subtitle")
     @Expose
     private String mSubtitle;
 
+    @ColumnInfo(name = "authors")
+    @TypeConverters(BookConverter.class)
     @SerializedName("authors")
     @Expose
     private List<String> mAuthors;
 
+    @ColumnInfo(name = "publisher")
     @SerializedName("publisher")
     @Expose
     private String mPublisher;
 
+    @ColumnInfo(name = "publishedDate")
     @SerializedName("publishedDate")
     @Expose
     private String mPublishedDate;
 
+    @ColumnInfo(name = "averageRating")
     @SerializedName("averageRating")
     @Expose
     private Float mAverageRating;
 
+    @ColumnInfo(name = "ratingsCount")
     @SerializedName("ratingsCount")
     @Expose
     private Integer mRatingsCount;
 
+    @ColumnInfo(name = "pageCount")
     @SerializedName("pageCount")
     @Expose
     private Integer mPageCount;
 
+    @ColumnInfo(name = "description")
     @SerializedName("description")
     @Expose
     private String mDescription;
 
+    @ColumnInfo(name = "previewLink")
     @SerializedName("previewLink")
     @Expose
     private String mPreviewLink;
 
+    @ColumnInfo(name = "infoLink")
     @SerializedName("infoLink")
     @Expose
     private String mInfoLink;
 
+    @Embedded
     @SerializedName("imageLinks")
     @Expose
     private ImageLinks mImageLinks;

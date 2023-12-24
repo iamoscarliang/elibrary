@@ -3,9 +3,16 @@ package com.oscarliang.elibrary.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+@Entity(tableName = "books")
 public class Book implements Parcelable {
 
     public static final Creator<Book> CREATOR = new Creator<Book>() {
@@ -20,25 +27,34 @@ public class Book implements Parcelable {
         }
     };
 
+    @PrimaryKey()
+    @ColumnInfo(name = "id")
+    @NonNull
     @SerializedName("id")
     @Expose
     private String mId;
 
+    @Embedded
     @SerializedName("volumeInfo")
     @Expose
     private VolumeInfo mVolumeInfo;
 
+    @ColumnInfo(name = "category")
+    private String mCategory;
+
     //--------------------------------------------------------
     // Constructors
     //--------------------------------------------------------
-    public Book(String id, VolumeInfo volumeInfo) {
+    public Book(String id, VolumeInfo volumeInfo, String category) {
         mId = id;
         mVolumeInfo = volumeInfo;
+        mCategory = category;
     }
 
     protected Book(Parcel in) {
         mId = in.readString();
         mVolumeInfo = in.readParcelable(VolumeInfo.class.getClassLoader());
+        mCategory = in.readString();
     }
     //========================================================
 
@@ -60,20 +76,29 @@ public class Book implements Parcelable {
     public void setVolumeInfo(VolumeInfo volumeInfo) {
         mVolumeInfo = volumeInfo;
     }
+
+    public String getCategory() {
+        return mCategory;
+    }
+
+    public void setCategory(String category) {
+        mCategory = category;
+    }
     //========================================================
 
     //--------------------------------------------------------
     // Overriding methods
     //--------------------------------------------------------
     @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mId);
         dest.writeParcelable(mVolumeInfo, flags);
+        dest.writeString(mCategory);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     @Override
@@ -81,6 +106,7 @@ public class Book implements Parcelable {
         return "Book{" +
                 "id='" + mId + '\'' +
                 ", volumeInfo=" + mVolumeInfo.toString() +
+                ", category='" + mCategory + '\'' +
                 '}';
     }
     //========================================================

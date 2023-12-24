@@ -21,6 +21,7 @@ public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int BOOK_TYPE = 0;
     private static final int LOADING_TYPE = 1;
     private static final int EXHAUSTED_TYPE = 2;
+    private static final int ERROR_TYPE = 3;
 
     private final OnBookClickListener mOnBookClickListener;
 
@@ -32,6 +33,7 @@ public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         NONE,
         LOADING,
         EXHAUSTED,
+        ERROR
     }
 
     //--------------------------------------------------------
@@ -58,6 +60,9 @@ public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 return new IndicatorViewHolder(view);
             case EXHAUSTED_TYPE:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_exhausted_item, parent, false);
+                return new IndicatorViewHolder(view);
+            case ERROR_TYPE:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_error_item, parent, false);
                 return new IndicatorViewHolder(view);
             default:
                 throw new IllegalArgumentException("ViewHolder type not found!");
@@ -99,6 +104,8 @@ public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     return LOADING_TYPE;
                 case EXHAUSTED:
                     return EXHAUSTED_TYPE;
+                case ERROR:
+                    return ERROR_TYPE;
                 default:
                     throw new IllegalArgumentException("Last item type not found!");
             }
@@ -118,20 +125,25 @@ public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     // Methods
     //--------------------------------------------------------
     public void displayBooks(List<Book> books) {
-        mLastItemState = LastItemState.LOADING;
         mBooks.clear();
         mBooks.addAll(books);
+        // Update last item state
+        if (books.size() < 10) {
+            mLastItemState = LastItemState.EXHAUSTED;
+        } else {
+            mLastItemState = LastItemState.LOADING;
+        }
         notifyDataSetChanged();
     }
 
-    public void displayExhausted() {
-        mLastItemState = LastItemState.EXHAUSTED;
+    public void displayError() {
+        mLastItemState = LastItemState.ERROR;
         notifyDataSetChanged();
     }
 
     public void clearBooks() {
-        mLastItemState = LastItemState.NONE;
         mBooks.clear();
+        mLastItemState = LastItemState.NONE;
         notifyDataSetChanged();
     }
     //========================================================
@@ -139,7 +151,7 @@ public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     //--------------------------------------------------------
     // Inner Classes
     //--------------------------------------------------------
-    public static class BookViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class BookViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final OnBookClickListener mOnBookClickListener;
         private final ImageView mImageBook;
@@ -170,7 +182,7 @@ public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         //--------------------------------------------------------
         @Override
         public void onClick(View view) {
-            mOnBookClickListener.onBookClick(this);
+            mOnBookClickListener.onBookClick(mBooks.get(getAdapterPosition()));
         }
         //========================================================
 
@@ -190,7 +202,7 @@ public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public interface OnBookClickListener {
 
-        void onBookClick(BookViewHolder holder);
+        void onBookClick(Book book);
 
     }
     //========================================================
