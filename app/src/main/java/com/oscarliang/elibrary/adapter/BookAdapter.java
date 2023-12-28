@@ -151,7 +151,7 @@ public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     //--------------------------------------------------------
     // Inner Classes
     //--------------------------------------------------------
-    public class BookViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    private class BookViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final OnBookClickListener mOnBookClickListener;
         private final ImageView mImageBook;
@@ -188,7 +188,7 @@ public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     }
 
-    public static class IndicatorViewHolder extends RecyclerView.ViewHolder {
+    private static class IndicatorViewHolder extends RecyclerView.ViewHolder {
 
         //--------------------------------------------------------
         // Constructors

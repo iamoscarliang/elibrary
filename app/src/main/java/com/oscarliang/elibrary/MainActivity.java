@@ -7,14 +7,24 @@ import android.widget.ProgressBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.oscarliang.elibrary.di.Injectable;
 import com.oscarliang.elibrary.ui.BaseFragment;
-import com.oscarliang.elibrary.ui.CategoryFragment;
+import com.oscarliang.elibrary.ui.category.CategoryFragment;
 
-public class MainActivity extends AppCompatActivity {
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.HasAndroidInjector;
+
+public class MainActivity extends AppCompatActivity implements Injectable, HasAndroidInjector {
 
     private static final String FRAGMENT_TAG = "content";
 
     private ProgressBar mProgressBar;
+
+    @Inject
+    DispatchingAndroidInjector<Object> fragmentDispatchingAndroidInjector;
 
     //--------------------------------------------------------
     // Overriding methods
@@ -37,6 +47,11 @@ public class MainActivity extends AppCompatActivity {
         if (fragment == null || !fragment.onBackPressed()) {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public AndroidInjector<Object> androidInjector() {
+        return fragmentDispatchingAndroidInjector;
     }
     //========================================================
 

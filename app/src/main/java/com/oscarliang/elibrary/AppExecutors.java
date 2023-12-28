@@ -5,32 +5,22 @@ import android.os.Looper;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class AppExecutors {
 
-    private static AppExecutors INSTANCE;
-
     private final Executor mDiskIO = Executors.newSingleThreadExecutor();
-    private final ScheduledExecutorService mNetworkIO = Executors.newScheduledThreadPool(3);
+    private final Executor mNetworkIO = Executors.newFixedThreadPool(3);
     private final Executor mMainThreadExecutor = new MainThreadExecutor();
 
     //--------------------------------------------------------
     // Constructors
     //--------------------------------------------------------
-    private AppExecutors() {
-    }
-    //========================================================
-
-    //--------------------------------------------------------
-    // Static methods
-    //--------------------------------------------------------
-    public static AppExecutors getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new AppExecutors();
-        }
-
-        return INSTANCE;
+    @Inject
+    public AppExecutors() {
     }
     //========================================================
 
@@ -41,7 +31,7 @@ public class AppExecutors {
         return mDiskIO;
     }
 
-    public ScheduledExecutorService networkIO() {
+    public Executor networkIO() {
         return mNetworkIO;
     }
 

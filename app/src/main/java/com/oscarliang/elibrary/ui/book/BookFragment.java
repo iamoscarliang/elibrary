@@ -1,4 +1,4 @@
-package com.oscarliang.elibrary.ui;
+package com.oscarliang.elibrary.ui.book;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -15,13 +15,17 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.oscarliang.elibrary.R;
 import com.oscarliang.elibrary.adapter.BookAdapter;
+import com.oscarliang.elibrary.di.Injectable;
 import com.oscarliang.elibrary.model.Book;
-import com.oscarliang.elibrary.viewmodel.BookViewModel;
+import com.oscarliang.elibrary.ui.BaseFragment;
+import com.oscarliang.elibrary.ui.bookdetail.BookDetailFragment;
 import com.oscarliang.elibrary.vo.Resource;
 
 import java.util.List;
 
-public class BookFragment extends BaseFragment implements BookAdapter.OnBookClickListener {
+import javax.inject.Inject;
+
+public class BookFragment extends BaseFragment implements Injectable, BookAdapter.OnBookClickListener {
 
     private static final String QUERY_PARAM = "query_param";
 
@@ -30,6 +34,9 @@ public class BookFragment extends BaseFragment implements BookAdapter.OnBookClic
     private RecyclerView mRecyclerView;
     private BookAdapter mAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+
+    @Inject
+    ViewModelProvider.Factory mFactory;
 
     private BookViewModel mViewModel;
 
@@ -75,7 +82,7 @@ public class BookFragment extends BaseFragment implements BookAdapter.OnBookClic
         super.onViewCreated(view, savedInstanceState);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycle_view_book);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
-        mViewModel = new ViewModelProvider(getActivity()).get(BookViewModel.class);
+        mViewModel = new ViewModelProvider(getActivity(), mFactory).get(BookViewModel.class);
         initRecyclerView();
         initSwipeRefreshLayout();
         subscribeObservers();

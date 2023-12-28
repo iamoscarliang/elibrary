@@ -1,9 +1,9 @@
-package com.oscarliang.elibrary.viewmodel;
+package com.oscarliang.elibrary.ui.book;
 
 import android.app.Application;
 import android.util.Log;
 
-import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
@@ -14,9 +14,10 @@ import com.oscarliang.elibrary.vo.Resource;
 
 import java.util.List;
 
-public class BookViewModel extends AndroidViewModel {
+import javax.inject.Inject;
 
-    private final BookRepository mRepository;
+public class BookViewModel extends ViewModel {
+
     private final LiveData<Resource<List<Book>>> mResults;
 
     private final MutableLiveData<Query> mQuery = new MutableLiveData<>();
@@ -24,12 +25,11 @@ public class BookViewModel extends AndroidViewModel {
     //--------------------------------------------------------
     // Constructors
     //--------------------------------------------------------
-    public BookViewModel(Application application) {
-        super(application);
-        mRepository = BookRepository.getInstance(application);
+    @Inject
+    public BookViewModel(BookRepository repository) {
         mResults = Transformations.switchMap(
                 mQuery,
-                query -> mRepository.searchBooks(query.mQuery, query.mMaxResults, query.mPage)
+                query -> repository.searchBooks(query.mQuery, query.mMaxResults, query.mPage)
         );
     }
     //========================================================

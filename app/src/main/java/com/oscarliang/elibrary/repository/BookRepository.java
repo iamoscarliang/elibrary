@@ -1,45 +1,35 @@
 package com.oscarliang.elibrary.repository;
 
-import android.app.Application;
-
 import androidx.lifecycle.LiveData;
 
 import com.oscarliang.elibrary.AppExecutors;
 import com.oscarliang.elibrary.api.ApiResponse;
 import com.oscarliang.elibrary.api.BookResponse;
-import com.oscarliang.elibrary.api.ServiceGenerator;
+import com.oscarliang.elibrary.api.BookService;
 import com.oscarliang.elibrary.db.BookDao;
-import com.oscarliang.elibrary.db.BookDatabase;
 import com.oscarliang.elibrary.model.Book;
 import com.oscarliang.elibrary.vo.Resource;
 
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class BookRepository {
 
-    private static BookRepository INSTANCE;
-
-    private final BookDao mDao;
     private final AppExecutors mExecutors;
+    private final BookDao mDao;
+    private final BookService mBookService;
 
     //--------------------------------------------------------
     // Constructors
     //--------------------------------------------------------
-    private BookRepository(Application application) {
-        mDao = BookDatabase.getInstance(application).getBookDao();
-        mExecutors = AppExecutors.getInstance();
-    }
-    //========================================================
-
-    //--------------------------------------------------------
-    // Static methods
-    //--------------------------------------------------------
-    public static BookRepository getInstance(Application application) {
-        if (INSTANCE == null) {
-            INSTANCE = new BookRepository(application);
-        }
-
-        return INSTANCE;
+    @Inject
+    public BookRepository(AppExecutors appExecutors, BookDao bookDao, BookService bookService) {
+        mExecutors = appExecutors;
+        mDao = bookDao;
+        mBookService = bookService;
     }
     //========================================================
 
@@ -71,8 +61,7 @@ public class BookRepository {
 
             @Override
             protected LiveData<ApiResponse<BookResponse>> createCall() {
-                return ServiceGenerator.getBookService()
-                        .searchBook(query, String.valueOf(maxResults), String.valueOf(maxResults * (page - 1)));
+                return mBookService.searchBook(query, String.valueOf(maxResults), String.valueOf(maxResults * (page - 1)));
             }
         }.getLiveData();
     }

@@ -1,4 +1,4 @@
-package com.oscarliang.elibrary.ui;
+package com.oscarliang.elibrary.ui.bookdetail;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.oscarliang.elibrary.R;
 import com.oscarliang.elibrary.model.Book;
+import com.oscarliang.elibrary.ui.BaseFragment;
 
 import java.util.List;
 

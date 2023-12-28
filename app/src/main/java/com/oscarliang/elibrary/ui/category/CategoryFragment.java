@@ -1,4 +1,4 @@
-package com.oscarliang.elibrary.ui;
+package com.oscarliang.elibrary.ui.category;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.oscarliang.elibrary.R;
 import com.oscarliang.elibrary.adapter.CategoryAdapter;
 import com.oscarliang.elibrary.model.Category;
+import com.oscarliang.elibrary.ui.BaseFragment;
+import com.oscarliang.elibrary.ui.book.BookFragment;
 
 public class CategoryFragment extends BaseFragment implements CategoryAdapter.OnCategoryClickListener {
 
