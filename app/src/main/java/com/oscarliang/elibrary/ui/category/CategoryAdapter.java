@@ -1,4 +1,4 @@
-package com.oscarliang.elibrary.adapter;
+package com.oscarliang.elibrary.ui.category;
 
 import android.view.LayoutInflater;
 import android.view.View;

@@ -4,8 +4,6 @@ import com.oscarliang.elibrary.R;
 
 public class Constant {
 
-    public static final String BASE_URL = "https://www.googleapis.com";
-
     public static final String[] DEFAULT_SEARCH_CATEGORIES =
             {
                     "Art",

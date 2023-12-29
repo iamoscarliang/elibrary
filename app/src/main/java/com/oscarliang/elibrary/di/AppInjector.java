@@ -11,14 +11,20 @@ import androidx.fragment.app.FragmentManager;
 import com.oscarliang.elibrary.BookApp;
 
 import dagger.android.AndroidInjection;
-import dagger.android.HasAndroidInjector;
 import dagger.android.support.AndroidSupportInjection;
 
 public class AppInjector {
 
+    //--------------------------------------------------------
+    // Constructors
+    //--------------------------------------------------------
     private AppInjector() {
     }
+    //========================================================
 
+    //--------------------------------------------------------
+    // Static methods
+    //--------------------------------------------------------
     public static void init(BookApp bookApp) {
 
         DaggerAppComponent.builder()
@@ -82,5 +88,6 @@ public class AppInjector {
                             }, true);
         }
     }
+    //========================================================
 
 }

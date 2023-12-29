@@ -36,7 +36,7 @@ public class BookRepository {
     //--------------------------------------------------------
     // Methods
     //--------------------------------------------------------
-    public LiveData<Resource<List<Book>>> searchBooks(String query, int maxResults, int page) {
+    public LiveData<Resource<List<Book>>> getBooks(String query, int maxResults, int page) {
         return new NetworkBoundResource<List<Book>, BookResponse>(mExecutors) {
             @Override
             protected void saveCallResult(BookResponse item) {
@@ -61,7 +61,7 @@ public class BookRepository {
 
             @Override
             protected LiveData<ApiResponse<BookResponse>> createCall() {
-                return mBookService.searchBook(query, String.valueOf(maxResults), String.valueOf(maxResults * (page - 1)));
+                return mBookService.getBooks(query, String.valueOf(maxResults), String.valueOf(maxResults * (page - 1)));
             }
         }.getLiveData();
     }

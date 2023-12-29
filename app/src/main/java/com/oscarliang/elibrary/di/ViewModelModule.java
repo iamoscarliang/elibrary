@@ -13,6 +13,9 @@ import dagger.multibindings.IntoMap;
 @Module
 public abstract class ViewModelModule {
 
+    //--------------------------------------------------------
+    // Methods
+    //--------------------------------------------------------
     @Binds
     @IntoMap
     @ViewModelKey(BookViewModel.class)
@@ -20,5 +23,6 @@ public abstract class ViewModelModule {
 
     @Binds
     public abstract ViewModelProvider.Factory bindViewModelFactory(BookViewModelFactory viewModelFactory);
+    //========================================================
 
 }

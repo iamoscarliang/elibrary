@@ -19,6 +19,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Module(includes = ViewModelModule.class)
 public class AppModule {
 
+    //--------------------------------------------------------
+    // Methods
+    //--------------------------------------------------------
     @Singleton
     @Provides
     BookService provideBookService() {
@@ -44,5 +47,6 @@ public class AppModule {
     BookDao provideBookDao(BookDatabase bookDatabase) {
         return bookDatabase.getBookDao();
     }
+    //========================================================
 
 }

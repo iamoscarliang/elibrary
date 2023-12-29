@@ -1,4 +1,4 @@
-package com.oscarliang.elibrary.adapter;
+package com.oscarliang.elibrary.ui.book;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,9 +9,9 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.oscarliang.elibrary.R;
 import com.oscarliang.elibrary.model.Book;
+import com.oscarliang.elibrary.ui.common.GenericViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,13 +57,13 @@ public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 return new BookViewHolder(view, mOnBookClickListener);
             case LOADING_TYPE:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_loading_item, parent, false);
-                return new IndicatorViewHolder(view);
+                return new GenericViewHolder(view);
             case EXHAUSTED_TYPE:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_exhausted_item, parent, false);
-                return new IndicatorViewHolder(view);
+                return new GenericViewHolder(view);
             case ERROR_TYPE:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_error_item, parent, false);
-                return new IndicatorViewHolder(view);
+                return new GenericViewHolder(view);
             default:
                 throw new IllegalArgumentException("ViewHolder type not found!");
         }
@@ -76,11 +76,10 @@ public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (viewType == BOOK_TYPE) {
             Book book = mBooks.get(position);
             if (book.getVolumeInfo().getImageLinks() != null) {
-                RequestOptions requestOptions = new RequestOptions()
-                        .placeholder(R.drawable.ic_book);
                 Glide.with(holder.itemView.getContext())
-                        .setDefaultRequestOptions(requestOptions)
                         .load(book.getVolumeInfo().getImageLinks().getThumbnail())
+                        .placeholder(R.drawable.ic_book)
+                        .error(R.drawable.ic_book)
                         .into(((BookViewHolder) holder).mImageBook);
             }
             ((BookViewHolder) holder).mTxtTitle.setText(book.getVolumeInfo().getTitle());
@@ -124,7 +123,7 @@ public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     //--------------------------------------------------------
     // Methods
     //--------------------------------------------------------
-    public void displayBooks(List<Book> books) {
+    public void showBooks(List<Book> books) {
         mBooks.clear();
         mBooks.addAll(books);
         // Update last item state
@@ -136,7 +135,7 @@ public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         notifyDataSetChanged();
     }
 
-    public void displayError() {
+    public void showError() {
         mLastItemState = LastItemState.ERROR;
         notifyDataSetChanged();
     }
@@ -183,18 +182,6 @@ public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         @Override
         public void onClick(View view) {
             mOnBookClickListener.onBookClick(mBooks.get(getAdapterPosition()));
-        }
-        //========================================================
-
-    }
-
-    private static class IndicatorViewHolder extends RecyclerView.ViewHolder {
-
-        //--------------------------------------------------------
-        // Constructors
-        //--------------------------------------------------------
-        public IndicatorViewHolder(View view) {
-            super(view);
         }
         //========================================================
 

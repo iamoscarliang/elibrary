@@ -5,39 +5,40 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.oscarliang.elibrary.R;
-import com.oscarliang.elibrary.adapter.BookAdapter;
 import com.oscarliang.elibrary.di.Injectable;
 import com.oscarliang.elibrary.model.Book;
-import com.oscarliang.elibrary.ui.BaseFragment;
-import com.oscarliang.elibrary.ui.bookdetail.BookDetailFragment;
 import com.oscarliang.elibrary.vo.Resource;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-public class BookFragment extends BaseFragment implements Injectable, BookAdapter.OnBookClickListener {
+public class BookFragment extends Fragment implements Injectable, BookAdapter.OnBookClickListener {
 
-    private static final String QUERY_PARAM = "query_param";
+    private static final String QUERY = "query";
 
     private String mQuery;
-
-    private RecyclerView mRecyclerView;
-    private BookAdapter mAdapter;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Inject
     ViewModelProvider.Factory mFactory;
 
+    private RecyclerView mRecyclerView;
+    private BookAdapter mAdapter;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private ProgressBar mProgressBar;
     private BookViewModel mViewModel;
 
     //--------------------------------------------------------
@@ -49,25 +50,13 @@ public class BookFragment extends BaseFragment implements Injectable, BookAdapte
     //========================================================
 
     //--------------------------------------------------------
-    // Static methods
-    //--------------------------------------------------------
-    public static BookFragment newInstance(String query) {
-        BookFragment fragment = new BookFragment();
-        Bundle args = new Bundle();
-        args.putString(QUERY_PARAM, query);
-        fragment.setArguments(args);
-        return fragment;
-    }
-    //========================================================
-
-    //--------------------------------------------------------
     // Overriding methods
     //--------------------------------------------------------
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mQuery = getArguments().getString(QUERY_PARAM);
+            mQuery = getArguments().getString(QUERY);
         }
     }
 
@@ -82,33 +71,21 @@ public class BookFragment extends BaseFragment implements Injectable, BookAdapte
         super.onViewCreated(view, savedInstanceState);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycle_view_book);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
         mViewModel = new ViewModelProvider(getActivity(), mFactory).get(BookViewModel.class);
         initRecyclerView();
         initSwipeRefreshLayout();
         subscribeObservers();
 
-        // Display books only at first launch
+        // Load books only at first launch
         if (savedInstanceState == null) {
-            displayBooks();
+            loadBooks();
         }
     }
 
     @Override
-    public boolean onBackPressed() {
-        // Cancel the search request
-        getMainActivity().showProgressBar(false);
-        Log.d("test", "Back pressed!");
-        return super.onBackPressed();
-    }
-
-    @Override
     public void onBookClick(Book book) {
-        getMainActivity().navigateToFragment(BookDetailFragment.newInstance(book),
-                R.anim.slide_in,  // enter
-                R.anim.fade_out,  // exit
-                R.anim.fade_in,   // popEnter
-                R.anim.slide_out  // popExit
-        );
+        navigateBookInfoFragment(book);
     }
     //========================================================
 
@@ -125,7 +102,7 @@ public class BookFragment extends BaseFragment implements Injectable, BookAdapte
                 // Check is scroll to bottom
                 if (!mRecyclerView.canScrollVertically(1)) {
                     // Load next page
-                    displayNextPage();
+                    loadNextPage();
                 }
             }
         });
@@ -137,7 +114,7 @@ public class BookFragment extends BaseFragment implements Injectable, BookAdapte
             public void onRefresh() {
                 mSwipeRefreshLayout.setRefreshing(false);
                 mAdapter.clearBooks();
-                displayBooks();
+                loadBooks();
                 Log.d("test", "Refresh!");
             }
         });
@@ -149,12 +126,12 @@ public class BookFragment extends BaseFragment implements Injectable, BookAdapte
             public void onChanged(Resource<List<Book>> listResource) {
                 switch (listResource.mState) {
                     case SUCCESS:
-                        mAdapter.displayBooks(listResource.mData);
-                        getMainActivity().showProgressBar(false);
+                        mAdapter.showBooks(listResource.mData);
+                        showProgressBar(false);
                         break;
                     case ERROR:
-                        mAdapter.displayError();
-                        getMainActivity().showProgressBar(false);
+                        mAdapter.showError();
+                        showProgressBar(false);
                         Toast.makeText(getContext(), "No network connection!", Toast.LENGTH_SHORT).show();
                         break;
                     case LOADING:
@@ -165,15 +142,26 @@ public class BookFragment extends BaseFragment implements Injectable, BookAdapte
         });
     }
 
-    private void displayBooks() {
-        // Display the first page when first search
-        mViewModel.setQuery(mQuery, 10, 1);
-        getMainActivity().showProgressBar(true);
+    private void navigateBookInfoFragment(Book book) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("book", book);
+        NavController navController = NavHostFragment.findNavController(this);
+        navController.navigate(R.id.action_bookFragment_to_bookInfoFragment, bundle);
     }
 
-    private void displayNextPage() {
-        // Display and append the next page
+    private void loadBooks() {
+        // Load the first page when first search
+        mViewModel.setQuery(mQuery, 10, 1);
+        showProgressBar(true);
+    }
+
+    private void loadNextPage() {
+        // Load and append the next page
         mViewModel.loadNextPage();
+    }
+
+    public void showProgressBar(boolean visibility) {
+        mProgressBar.setVisibility(visibility ? View.VISIBLE : View.GONE);
     }
     //========================================================
 

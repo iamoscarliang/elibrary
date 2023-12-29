@@ -1,15 +1,14 @@
 package com.oscarliang.elibrary;
 
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import com.oscarliang.elibrary.di.Injectable;
-import com.oscarliang.elibrary.ui.BaseFragment;
-import com.oscarliang.elibrary.ui.category.CategoryFragment;
 
 import javax.inject.Inject;
 
@@ -18,10 +17,6 @@ import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasAndroidInjector;
 
 public class MainActivity extends AppCompatActivity implements Injectable, HasAndroidInjector {
-
-    private static final String FRAGMENT_TAG = "content";
-
-    private ProgressBar mProgressBar;
 
     @Inject
     DispatchingAndroidInjector<Object> fragmentDispatchingAndroidInjector;
@@ -33,46 +28,16 @@ public class MainActivity extends AppCompatActivity implements Injectable, HasAn
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
-        // Display category only at first launch
-        if (savedInstanceState == null) {
-            navigateToFragment(new CategoryFragment());
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        BaseFragment fragment = (BaseFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
-        if (fragment == null || !fragment.onBackPressed()) {
-            super.onBackPressed();
-        }
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
+        NavController navController = navHostFragment.getNavController();
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
+        NavigationUI.setupWithNavController(findViewById(R.id.toolbar), navController, appBarConfiguration);
     }
 
     @Override
     public AndroidInjector<Object> androidInjector() {
         return fragmentDispatchingAndroidInjector;
-    }
-    //========================================================
-
-    //--------------------------------------------------------
-    // Methods
-    //--------------------------------------------------------
-    public void navigateToFragment(Fragment fragment) {
-        navigateToFragment(fragment, 0, 0, 0, 0);
-    }
-
-    public void navigateToFragment(Fragment fragment, int enter, int exit, int popEnter, int popExit) {
-        getSupportFragmentManager()
-                .beginTransaction()
-                .setCustomAnimations(enter, exit, popEnter, popExit)
-                .replace(R.id.container, fragment, FRAGMENT_TAG)
-                .addToBackStack(null)
-                .commit();
-    }
-
-    public void showProgressBar(boolean visibility) {
-        mProgressBar.setVisibility(visibility ? View.VISIBLE : View.GONE);
     }
     //========================================================
 

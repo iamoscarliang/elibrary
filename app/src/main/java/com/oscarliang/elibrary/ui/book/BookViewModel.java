@@ -1,12 +1,11 @@
 package com.oscarliang.elibrary.ui.book;
 
-import android.app.Application;
 import android.util.Log;
 
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
+import androidx.lifecycle.ViewModel;
 
 import com.oscarliang.elibrary.model.Book;
 import com.oscarliang.elibrary.repository.BookRepository;
@@ -29,7 +28,7 @@ public class BookViewModel extends ViewModel {
     public BookViewModel(BookRepository repository) {
         mResults = Transformations.switchMap(
                 mQuery,
-                query -> repository.searchBooks(query.mQuery, query.mMaxResults, query.mPage)
+                query -> repository.getBooks(query.mQuery, query.mMaxResults, query.mPage)
         );
     }
     //========================================================

@@ -8,7 +8,11 @@ import dagger.android.ContributesAndroidInjector;
 @Module
 public abstract class FragmentBuildersModule {
 
+    //--------------------------------------------------------
+    // Methods
+    //--------------------------------------------------------
     @ContributesAndroidInjector
     abstract BookFragment contributeBookFragment();
+    //========================================================
 
 }

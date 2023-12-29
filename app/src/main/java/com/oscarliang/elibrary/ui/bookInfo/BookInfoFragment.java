@@ -1,4 +1,4 @@
-package com.oscarliang.elibrary.ui.bookdetail;
+package com.oscarliang.elibrary.ui.bookInfo;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -10,17 +10,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.oscarliang.elibrary.R;
 import com.oscarliang.elibrary.model.Book;
-import com.oscarliang.elibrary.ui.BaseFragment;
 
 import java.util.List;
 
-public class BookDetailFragment extends BaseFragment {
+public class BookInfoFragment extends Fragment {
 
-    private static final String BOOK_PARAM = "book_param";
+    private static final String BOOK = "book";
 
     private Book mBook;
 
@@ -40,20 +40,8 @@ public class BookDetailFragment extends BaseFragment {
     //--------------------------------------------------------
     // Constructors
     //--------------------------------------------------------
-    public BookDetailFragment() {
+    public BookInfoFragment() {
         // Required empty public constructor
-    }
-    //========================================================
-
-    //--------------------------------------------------------
-    // Static methods
-    //--------------------------------------------------------
-    public static BookDetailFragment newInstance(Book book) {
-        BookDetailFragment fragment = new BookDetailFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(BOOK_PARAM, book);
-        fragment.setArguments(args);
-        return fragment;
     }
     //========================================================
 
@@ -64,7 +52,7 @@ public class BookDetailFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mBook = getArguments().getParcelable(BOOK_PARAM);
+            mBook = getArguments().getParcelable(BOOK);
         }
     }
 
@@ -72,7 +60,7 @@ public class BookDetailFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_book_detail, container, false);
+        return inflater.inflate(R.layout.fragment_book_info, container, false);
     }
 
     @Override
@@ -100,11 +88,10 @@ public class BookDetailFragment extends BaseFragment {
     //--------------------------------------------------------
     private void initBook(Book book) {
         if (book.getVolumeInfo().getImageLinks() != null) {
-            RequestOptions requestOptions = new RequestOptions()
-                    .placeholder(R.drawable.ic_book);
             Glide.with(this)
-                    .setDefaultRequestOptions(requestOptions)
                     .load(book.getVolumeInfo().getImageLinks().getThumbnail())
+                    .placeholder(R.drawable.ic_book)
+                    .error(R.drawable.ic_book)
                     .into(mImageBook);
         }
         mTextTitle.setText(book.getVolumeInfo().getTitle());

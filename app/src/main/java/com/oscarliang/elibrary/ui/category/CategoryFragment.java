@@ -1,25 +1,23 @@
 package com.oscarliang.elibrary.ui.category;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
-import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.oscarliang.elibrary.R;
-import com.oscarliang.elibrary.adapter.CategoryAdapter;
 import com.oscarliang.elibrary.model.Category;
-import com.oscarliang.elibrary.ui.BaseFragment;
-import com.oscarliang.elibrary.ui.book.BookFragment;
 
-public class CategoryFragment extends BaseFragment implements CategoryAdapter.OnCategoryClickListener {
+public class CategoryFragment extends Fragment implements CategoryAdapter.OnCategoryClickListener {
 
     private SearchView mSearchView;
     private RecyclerView mRecyclerView;
@@ -36,6 +34,18 @@ public class CategoryFragment extends BaseFragment implements CategoryAdapter.On
     //--------------------------------------------------------
     // Overriding methods
     //--------------------------------------------------------
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // Handle the back button event
+                showExitDialog();
+            }
+        });
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -54,13 +64,7 @@ public class CategoryFragment extends BaseFragment implements CategoryAdapter.On
 
     @Override
     public void onCategoryClick(Category category) {
-        showSearchFragment(category.getName());
-    }
-
-    @Override
-    public boolean onBackPressed() {
-        showExitDialog();
-        return true;
+        navigateBookFragment(category.getName());
     }
     //========================================================
 
@@ -71,7 +75,7 @@ public class CategoryFragment extends BaseFragment implements CategoryAdapter.On
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                showSearchFragment(query);
+                navigateBookFragment(query);
                 mSearchView.clearFocus();
                 return false;
             }
@@ -89,38 +93,17 @@ public class CategoryFragment extends BaseFragment implements CategoryAdapter.On
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
     }
 
-    private void showSearchFragment(String query) {
-        getMainActivity().navigateToFragment(BookFragment.newInstance(query));
+    private void navigateBookFragment(String query) {
+        Bundle bundle = new Bundle();
+        bundle.putString("query", query);
+        NavController navController = NavHostFragment.findNavController(this);
+        navController.navigate(R.id.action_categoryFragment_to_bookFragment, bundle);
+
     }
 
     private void showExitDialog() {
-        new ExitDialogFragment().show(getActivity().getSupportFragmentManager(), null);
-    }
-    //========================================================
-
-    //--------------------------------------------------------
-    // Inner Classes
-    //--------------------------------------------------------
-    public static class ExitDialogFragment extends DialogFragment {
-
-        //--------------------------------------------------------
-        // Overriding methods
-        //--------------------------------------------------------
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle(R.string.exit_dialog_title);
-            builder.setPositiveButton(R.string.exit, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    getActivity().finish();
-                }
-            });
-            builder.setNegativeButton(R.string.cancel, null);
-            return builder.create();
-        }
-        //========================================================
-
+        NavController navController = NavHostFragment.findNavController(this);
+        navController.navigate(R.id.action_categoryFragment_to_exitDialogFragment);
     }
     //========================================================
 

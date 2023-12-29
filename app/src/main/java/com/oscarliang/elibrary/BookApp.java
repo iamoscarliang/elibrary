@@ -15,6 +15,9 @@ public class BookApp extends Application implements HasAndroidInjector {
     @Inject
     DispatchingAndroidInjector<Object> fragmentDispatchingAndroidInjector;
 
+    //--------------------------------------------------------
+    // Overriding methods
+    //--------------------------------------------------------
     @Override
     public void onCreate() {
         super.onCreate();
@@ -25,5 +28,6 @@ public class BookApp extends Application implements HasAndroidInjector {
     public AndroidInjector<Object> androidInjector() {
         return fragmentDispatchingAndroidInjector;
     }
+    //========================================================
 
 }
