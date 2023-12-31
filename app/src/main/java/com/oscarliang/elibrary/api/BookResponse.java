@@ -8,6 +8,10 @@ import java.util.List;
 
 public class BookResponse {
 
+    @SerializedName("totalItems")
+    @Expose()
+    private int mBookCount;
+
     @SerializedName("items")
     @Expose()
     private List<Book> mBooks;
@@ -15,6 +19,10 @@ public class BookResponse {
     //--------------------------------------------------------
     // Getter and Setter
     //--------------------------------------------------------
+    public int getBookCount() {
+        return mBookCount;
+    }
+
     public List<Book> getBooks() {
         return mBooks;
     }

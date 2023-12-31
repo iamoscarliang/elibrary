@@ -10,7 +10,7 @@ public class ApiResponse<T> {
     // Methods
     //--------------------------------------------------------
     public ApiResponse<T> create(Throwable error) {
-        return new ApiErrorResponse<>(error.getMessage().equals("") ? error.getMessage() : "Unknown error!");
+        return new ApiErrorResponse<>(error.getMessage() != null ? error.getMessage() : "Unknown error!");
     }
 
     public ApiResponse<T> create(Response<T> response) {
