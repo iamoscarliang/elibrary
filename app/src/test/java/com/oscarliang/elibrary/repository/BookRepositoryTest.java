@@ -31,10 +31,8 @@ import java.util.List;
 @RunWith(JUnit4.class)
 public class BookRepositoryTest {
 
-    private final AppExecutors mAppExecutors = mock(AppExecutors.class);
-    private final BookDao mDao = mock(BookDao.class);
-    private final BookService mService = mock(BookService.class);
-
+    private BookDao mDao;
+    private BookService mService;
     private BookRepository mRepository;
 
     @Rule
@@ -42,7 +40,9 @@ public class BookRepositoryTest {
 
     @Before
     public void init() {
-        mRepository = new BookRepository(mAppExecutors, mDao, mService);
+        mDao = mock(BookDao.class);
+        mService = mock(BookService.class);
+        mRepository = new BookRepository(mock(AppExecutors.class), mDao, mService);
     }
 
     @Test

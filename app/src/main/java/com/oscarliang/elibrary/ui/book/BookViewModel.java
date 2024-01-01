@@ -31,7 +31,7 @@ public class BookViewModel extends ViewModel {
                 new Function1<Query, LiveData<Resource<List<Book>>>>() {
                     @Override
                     public LiveData<Resource<List<Book>>> invoke(Query query) {
-                        if (query == null) {
+                        if (query == null || query.mQuery == null || query.mQuery.isEmpty()) {
                             return AbsentLiveData.create();
                         } else {
                             return repository.getBooks(query.mQuery, query.mMaxResults, query.mPage);
