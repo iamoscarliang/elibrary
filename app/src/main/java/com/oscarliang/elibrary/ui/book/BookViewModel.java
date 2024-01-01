@@ -1,7 +1,5 @@
 package com.oscarliang.elibrary.ui.book;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
@@ -9,11 +7,14 @@ import androidx.lifecycle.ViewModel;
 
 import com.oscarliang.elibrary.model.Book;
 import com.oscarliang.elibrary.repository.BookRepository;
+import com.oscarliang.elibrary.util.AbsentLiveData;
 import com.oscarliang.elibrary.vo.Resource;
 
 import java.util.List;
 
 import javax.inject.Inject;
+
+import kotlin.jvm.functions.Function1;
 
 public class BookViewModel extends ViewModel {
 
@@ -26,10 +27,17 @@ public class BookViewModel extends ViewModel {
     //--------------------------------------------------------
     @Inject
     public BookViewModel(BookRepository repository) {
-        mResults = Transformations.switchMap(
-                mQuery,
-                query -> repository.getBooks(query.mQuery, query.mMaxResults, query.mPage)
-        );
+        mResults = Transformations.switchMap(mQuery,
+                new Function1<Query, LiveData<Resource<List<Book>>>>() {
+                    @Override
+                    public LiveData<Resource<List<Book>>> invoke(Query query) {
+                        if (query == null) {
+                            return AbsentLiveData.create();
+                        } else {
+                            return repository.getBooks(query.mQuery, query.mMaxResults, query.mPage);
+                        }
+                    }
+                });
     }
     //========================================================
 
@@ -49,7 +57,6 @@ public class BookViewModel extends ViewModel {
     }
 
     public void loadNextPage() {
-        Log.d("test", "Load next page!");
         Query query = mQuery.getValue();
         mQuery.setValue(new Query(query.mQuery, query.mMaxResults, query.mPage + 1));
     }

@@ -37,17 +37,16 @@ public class LiveDataCallAdapter<R> implements CallAdapter<R, LiveData<ApiRespon
             @Override
             protected void onActive() {
                 super.onActive();
-                final ApiResponse<R> apiResponse = new ApiResponse<>();
                 if (!call.isExecuted()) {
                     call.enqueue(new Callback<R>() {
                         @Override
                         public void onResponse(Call<R> call, Response<R> response) {
-                            postValue(apiResponse.create(response));
+                            postValue(ApiResponse.create(response));
                         }
 
                         @Override
                         public void onFailure(Call<R> call, Throwable t) {
-                            postValue(apiResponse.create(t));
+                            postValue(ApiResponse.create(t));
                         }
                     });
                 }

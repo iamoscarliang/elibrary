@@ -9,11 +9,11 @@ public class ApiResponse<T> {
     //--------------------------------------------------------
     // Methods
     //--------------------------------------------------------
-    public ApiResponse<T> create(Throwable error) {
+    public static <T> ApiResponse<T> create(Throwable error) {
         return new ApiErrorResponse<>(error.getMessage() != null ? error.getMessage() : "Unknown error!");
     }
 
-    public ApiResponse<T> create(Response<T> response) {
+    public static <T> ApiResponse<T> create(Response<T> response) {
         if (response.isSuccessful()) {
             T body = response.body();
             if (body == null || response.code() == 204) {

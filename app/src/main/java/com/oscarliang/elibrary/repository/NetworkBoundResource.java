@@ -1,7 +1,5 @@
 package com.oscarliang.elibrary.repository;
 
-import android.util.Log;
-
 import androidx.annotation.MainThread;
 import androidx.annotation.WorkerThread;
 import androidx.lifecycle.LiveData;
@@ -86,7 +84,6 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
                 mResult.removeSource(apiResponse);
 
                 if (response instanceof ApiResponse.ApiSuccessResponse) {
-                    Log.d("test", "Success api response!");
                     mAppExecutors.diskIO().execute(new Runnable() {
                         @Override
                         public void run() {
@@ -100,7 +97,6 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
                                     mResult.addSource(loadFromDb(), new Observer<ResultType>() {
                                         @Override
                                         public void onChanged(ResultType newData) {
-                                            Log.d("test", "Load from db!");
                                             setValue(Resource.success(newData));
                                         }
                                     });
@@ -109,25 +105,21 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
                         }
                     });
                 } else if (response instanceof ApiResponse.ApiEmptyResponse) {
-                    Log.d("test", "Empty api response!");
                     mAppExecutors.mainThread().execute(new Runnable() {
                         @Override
                         public void run() {
                             mResult.addSource(loadFromDb(), new Observer<ResultType>() {
                                 @Override
                                 public void onChanged(ResultType newData) {
-                                    Log.d("test", "Load from db!");
                                     setValue(Resource.success(newData));
                                 }
                             });
                         }
                     });
                 } else if (response instanceof ApiResponse.ApiErrorResponse) {
-                    Log.d("test", "Error api response!");
                     mResult.addSource(dbSource, new Observer<ResultType>() {
                         @Override
                         public void onChanged(ResultType newData) {
-                            Log.d("test", "Load from db!");
                             setValue(Resource.error(
                                     ((ApiResponse.ApiErrorResponse<RequestType>) response).getErrorMessage(),
                                     newData));
@@ -140,10 +132,10 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
 
     @MainThread
     private void setValue(Resource<ResultType> newValue) {
-        Log.d("test", "Update resource:" +
-                " state=" + newValue.mState +
-                ", msg=" + newValue.mMessage +
-                ", data=" + newValue.mData);
+//        Log.d("test", "Update resource:" +
+//                " state=" + newValue.mState +
+//                ", msg=" + newValue.mMessage +
+//                ", data=" + newValue.mData);
         if (mResult.getValue() != newValue) {
             mResult.setValue(newValue);
         }

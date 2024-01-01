@@ -51,7 +51,7 @@ public class BookRepository {
 
             @Override
             protected boolean shouldFetch(List<Book> data) {
-                return data.size() < maxResults * page;
+                return data == null || data.size() < maxResults * page;
             }
 
             @Override
