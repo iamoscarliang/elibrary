@@ -4,39 +4,37 @@ import com.oscarliang.elibrary.model.Book;
 import com.oscarliang.elibrary.model.ImageLinks;
 import com.oscarliang.elibrary.model.VolumeInfo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TestUtil {
 
-    public static Book createBook(String id,
-                                  String title,
-                                  String subtitle,
-                                  List<String> authors,
-                                  String publisher,
-                                  String publishedDate,
-                                  Float averageRating,
-                                  Integer ratingsCount,
-                                  Integer pageCount,
-                                  String description,
-                                  String previewLink,
-                                  String infoLink,
-                                  String thumbnail,
-                                  String category) {
+    public static List<Book> createBooks(int count, int id, String title, String category) {
+        List<Book> books = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            books.add(createBook(id + i, title, category));
+        }
+
+        return books;
+    }
+
+    public static Book createBook(int id, String title, String category) {
         VolumeInfo volumeInfo = new VolumeInfo(
                 title,
-                subtitle,
-                authors,
-                publisher,
-                publishedDate,
-                averageRating,
-                ratingsCount,
-                pageCount,
-                description,
-                previewLink,
-                infoLink,
-                new ImageLinks(thumbnail));
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
 
-        return new Book(id, volumeInfo, category);
+        return new Book(String.valueOf(id), volumeInfo, category);
     }
 
 }

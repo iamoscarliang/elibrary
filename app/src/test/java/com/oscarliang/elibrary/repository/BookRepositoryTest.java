@@ -17,6 +17,7 @@ import com.oscarliang.elibrary.api.BookService;
 import com.oscarliang.elibrary.db.BookDao;
 import com.oscarliang.elibrary.model.Book;
 import com.oscarliang.elibrary.util.AbsentLiveData;
+import com.oscarliang.elibrary.util.TestUtil;
 import com.oscarliang.elibrary.vo.Resource;
 
 import org.junit.Before;
@@ -59,7 +60,7 @@ public class BookRepositoryTest {
 
         List<Book> dbResult = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            dbResult.add(new Book(String.valueOf(i), null, null));
+            dbResult.add(TestUtil.createBook(i, "foo", "bar"));
         }
         dbSearchResult.postValue(dbResult);
 

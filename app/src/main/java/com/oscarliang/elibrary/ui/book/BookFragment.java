@@ -98,10 +98,11 @@ public class BookFragment extends Fragment implements Injectable, BookAdapter.On
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                // Check is scroll to bottom
-                if (!mRecyclerView.canScrollVertically(1)) {
-                    // Load next page
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                int lastPosition = layoutManager.findLastVisibleItemPosition();
+                // Check is scroll to last item
+                if (lastPosition == mAdapter.getItemCount() - 1) {
                     loadNextPage();
                 }
             }
@@ -135,7 +136,10 @@ public class BookFragment extends Fragment implements Injectable, BookAdapter.On
                         Toast.makeText(getContext(), "No network connection!", Toast.LENGTH_SHORT).show();
                         break;
                     case LOADING:
-                        // Ignore
+                        if (listResource.mData != null && !listResource.mData.isEmpty()) {
+                            mAdapter.showBooks(listResource.mData);
+                            showProgressBar(false);
+                        }
                         break;
                 }
             }

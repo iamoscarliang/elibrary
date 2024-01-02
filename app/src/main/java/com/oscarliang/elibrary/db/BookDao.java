@@ -14,9 +14,6 @@ import java.util.List;
 public interface BookDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertBook(Book book);
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertBooks(List<Book> books);
 
     @Query("SELECT * FROM books WHERE category = :query LIMIT :maxResult")

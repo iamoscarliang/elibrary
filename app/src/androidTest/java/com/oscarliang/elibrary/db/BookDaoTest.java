@@ -14,6 +14,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeoutException;
 
 @RunWith(AndroidJUnit4.class)
@@ -24,8 +25,8 @@ public class BookDaoTest extends BookDatabaseTest {
 
     @Test
     public void insertAndLoad() throws InterruptedException, TimeoutException {
-        Book book = TestUtil.createBook("0", "foo", null, null, null, null, null, null, null, null, null, null, null, "bar");
-        mDb.getBookDao().insertBook(book);
+        Book book = TestUtil.createBook(0, "foo", "bar");
+        mDb.getBookDao().insertBooks(Arrays.asList(book));
 
         Book loaded = LiveDataTestUtil.getValue(mDb.getBookDao().searchBooks("bar", 10)).get(0);
         assertNotNull(loaded);
