@@ -31,7 +31,7 @@ public class TestUtil {
                 null,
                 null,
                 null,
-                null
+                new ImageLinks(null)
         );
 
         return new Book(String.valueOf(id), volumeInfo, category);

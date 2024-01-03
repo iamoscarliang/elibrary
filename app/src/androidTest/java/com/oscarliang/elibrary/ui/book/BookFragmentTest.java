@@ -1,32 +1,40 @@
 package com.oscarliang.elibrary.ui.book;
 
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.CoreMatchers.not;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentFactory;
+import androidx.fragment.app.testing.FragmentScenario;
 import androidx.lifecycle.MutableLiveData;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.rule.ActivityTestRule;
 
 import com.oscarliang.elibrary.R;
 import com.oscarliang.elibrary.model.Book;
-import com.oscarliang.elibrary.testing.SingleFragmentActivity;
 import com.oscarliang.elibrary.util.RecyclerViewMatcher;
 import com.oscarliang.elibrary.util.TestUtil;
 import com.oscarliang.elibrary.util.ViewModelUtil;
 import com.oscarliang.elibrary.vo.Resource;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -36,22 +44,32 @@ import java.util.List;
 @RunWith(AndroidJUnit4.class)
 public class BookFragmentTest {
 
+    private NavController navController;
     private BookViewModel mViewModel;
 
     private final MutableLiveData<Resource<List<Book>>> mResults = new MutableLiveData<>();
 
-    @Rule
-    public ActivityTestRule<SingleFragmentActivity> mActivityRule =
-            new ActivityTestRule<>(SingleFragmentActivity.class, true, true);
-
     @Before
     public void init() {
+        navController = mock(NavController.class);
         mViewModel = mock(BookViewModel.class);
         when(mViewModel.getResults()).thenReturn(mResults);
 
-        BookFragment fragment = new BookFragment();
-        fragment.mFactory = ViewModelUtil.createFor(mViewModel);
-        mActivityRule.getActivity().setFragment(fragment);
+        FragmentScenario<BookFragment> scenario = FragmentScenario.launchInContainer(BookFragment.class, null,
+                new FragmentFactory() {
+                    @Override
+                    public Fragment instantiate(ClassLoader classLoader, String className) {
+                        BookFragment fragment = new BookFragment();
+                        fragment.mFactory = ViewModelUtil.createFor(mViewModel);
+                        return fragment;
+                    }
+                });
+        scenario.onFragment(new FragmentScenario.FragmentAction<BookFragment>() {
+            @Override
+            public void perform(BookFragment fragment) {
+                Navigation.setViewNavController(fragment.getView(), navController);
+            }
+        });
     }
 
     @Test
@@ -90,6 +108,15 @@ public class BookFragmentTest {
         onView(withId(R.id.recycle_view_book)).perform(action);
         onView(listMatcher().atPosition(10)).check(matches(isDisplayed()));
         verify(mViewModel).loadNextPage();
+    }
+
+    @Test
+    public void navigateToBookInfo() {
+        doNothing().when(mViewModel).loadNextPage();
+        Book book = TestUtil.createBook(0, "foo", "bar");
+        mResults.postValue(Resource.loading(Arrays.asList(book)));
+        onView(withText("foo")).perform(click());
+        verify(navController).navigate(eq(R.id.action_bookFragment_to_bookInfoFragment), any(Bundle.class));
     }
 
     private RecyclerViewMatcher listMatcher() {

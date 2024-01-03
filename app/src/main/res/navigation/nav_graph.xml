@@ -26,7 +26,7 @@
         tools:layout="@layout/fragment_book">
         <action
             android:id="@+id/action_bookFragment_to_bookInfoFragment"
-            app:destination="@id/bookDetailFragment"
+            app:destination="@id/bookInfoFragment"
             app:enterAnim="@anim/slide_in"
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
@@ -34,9 +34,9 @@
     </fragment>
 
     <fragment
-        android:id="@+id/bookDetailFragment"
+        android:id="@+id/bookInfoFragment"
         android:name="com.oscarliang.elibrary.ui.bookInfo.BookInfoFragment"
-        android:label="fragment_book_detail"
+        android:label="fragment_book_info"
         tools:layout="@layout/fragment_book_info" />
 
     <dialog
