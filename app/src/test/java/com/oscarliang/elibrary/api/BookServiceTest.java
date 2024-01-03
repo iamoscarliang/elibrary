@@ -30,17 +30,17 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @RunWith(JUnit4.class)
 public class BookServiceTest {
 
-    private MockWebServer mockWebServer;
-    private BookService bookService;
+    private MockWebServer mMockWebServer;
+    private BookService mService;
 
     @Rule
-    public InstantTaskExecutorRule instantExecutorRule = new InstantTaskExecutorRule();
+    public InstantTaskExecutorRule mInstantExecutorRule = new InstantTaskExecutorRule();
 
     @Before
     public void createService() {
-        mockWebServer = new MockWebServer();
-        bookService = new Retrofit.Builder()
-                .baseUrl(mockWebServer.url("/"))
+        mMockWebServer = new MockWebServer();
+        mService = new Retrofit.Builder()
+                .baseUrl(mMockWebServer.url("/"))
                 .addCallAdapterFactory(new LiveDataCallAdapterFactory())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
@@ -49,14 +49,14 @@ public class BookServiceTest {
 
     @After
     public void stopService() throws IOException {
-        mockWebServer.shutdown();
+        mMockWebServer.shutdown();
     }
 
     @Test
     public void search() throws IOException, InterruptedException, TimeoutException {
         enqueueResponse("search.json");
         ApiResponse<BookResponse> response = LiveDataTestUtil.getValue(
-                bookService.getBooks("java", String.valueOf(10), String.valueOf(0)));
+                mService.getBooks("java", String.valueOf(10), String.valueOf(0)));
 
         assertNotNull(response);
         assertEquals(441, ((ApiResponse.ApiSuccessResponse<BookResponse>) response).getBody().getBookCount());
@@ -68,7 +68,7 @@ public class BookServiceTest {
                 .getResourceAsStream("api-response/" + fileName);
         BufferedSource source = Okio.buffer(Okio.source(inputStream));
         MockResponse mockResponse = new MockResponse();
-        mockWebServer.enqueue(mockResponse.setBody(source.readString(StandardCharsets.UTF_8)));
+        mMockWebServer.enqueue(mockResponse.setBody(source.readString(StandardCharsets.UTF_8)));
     }
 
 }

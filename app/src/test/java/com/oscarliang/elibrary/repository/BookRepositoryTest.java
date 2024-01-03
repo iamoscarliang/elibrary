@@ -37,7 +37,7 @@ public class BookRepositoryTest {
     private BookRepository mRepository;
 
     @Rule
-    public InstantTaskExecutorRule instantExecutorRule = new InstantTaskExecutorRule();
+    public InstantTaskExecutorRule mInstantExecutorRule = new InstantTaskExecutorRule();
 
     @Before
     public void init() {

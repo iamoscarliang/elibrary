@@ -21,7 +21,7 @@ import java.util.concurrent.TimeoutException;
 public class BookDaoTest extends BookDatabaseTest {
 
     @Rule
-    public InstantTaskExecutorRule rule = new InstantTaskExecutorRule();
+    public InstantTaskExecutorRule mInstantTaskExecutorRule = new InstantTaskExecutorRule();
 
     @Test
     public void insertAndLoad() throws InterruptedException, TimeoutException {

@@ -33,7 +33,7 @@ public class BookViewModelTest {
     private BookViewModel mViewModel;
 
     @Rule
-    public InstantTaskExecutorRule instantExecutor = new InstantTaskExecutorRule();
+    public InstantTaskExecutorRule mInstantExecutor = new InstantTaskExecutorRule();
 
     @Before
     public void init() {
@@ -42,7 +42,7 @@ public class BookViewModelTest {
     }
 
     @Test
-    public void testNotNull() {
+    public void testNull() {
         assertNotNull(mViewModel.getResults());
         verify(mRepository, never()).getBooks(anyString(), anyInt(), anyInt());
     }
