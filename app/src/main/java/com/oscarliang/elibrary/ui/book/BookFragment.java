@@ -19,7 +19,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.oscarliang.elibrary.R;
 import com.oscarliang.elibrary.di.Injectable;
-import com.oscarliang.elibrary.model.Book;
+import com.oscarliang.elibrary.vo.Book;
 import com.oscarliang.elibrary.vo.Resource;
 
 import java.util.List;
@@ -127,17 +127,19 @@ public class BookFragment extends Fragment implements Injectable, BookAdapter.On
             public void onChanged(Resource<List<Book>> listResource) {
                 switch (listResource.mState) {
                     case SUCCESS:
-                        mAdapter.showBooks(listResource.mData);
+                        mAdapter.updateState(listResource.mData);
+                        mAdapter.showBook(listResource.mData);
                         showProgressBar(false);
                         break;
                     case ERROR:
+                        mAdapter.showBook(listResource.mData);
                         mAdapter.showError();
                         showProgressBar(false);
                         Toast.makeText(getContext(), "No network connection!", Toast.LENGTH_SHORT).show();
                         break;
                     case LOADING:
                         if (listResource.mData != null && !listResource.mData.isEmpty()) {
-                            mAdapter.showBooks(listResource.mData);
+                            mAdapter.showBook(listResource.mData);
                             showProgressBar(false);
                         }
                         break;

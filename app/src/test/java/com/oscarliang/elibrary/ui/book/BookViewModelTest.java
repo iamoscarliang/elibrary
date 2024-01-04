@@ -12,7 +12,7 @@ import static org.mockito.Mockito.verify;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.Observer;
 
-import com.oscarliang.elibrary.model.Book;
+import com.oscarliang.elibrary.vo.Book;
 import com.oscarliang.elibrary.repository.BookRepository;
 import com.oscarliang.elibrary.vo.Resource;
 

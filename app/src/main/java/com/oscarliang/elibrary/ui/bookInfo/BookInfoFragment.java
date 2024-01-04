@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.oscarliang.elibrary.R;
-import com.oscarliang.elibrary.model.Book;
+import com.oscarliang.elibrary.vo.Book;
 
 import java.util.List;
 

@@ -9,8 +9,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.oscarliang.elibrary.R;
-import com.oscarliang.elibrary.model.Category;
-import com.oscarliang.elibrary.util.Constant;
+import com.oscarliang.elibrary.vo.Category;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +25,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     //--------------------------------------------------------
     public CategoryAdapter(OnCategoryClickListener onCategoryClickListener) {
         mOnCategoryClickListener = onCategoryClickListener;
-        initCategory();
     }
     //========================================================
 
@@ -55,12 +53,13 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     //--------------------------------------------------------
     // Methods
     //--------------------------------------------------------
-    private void initCategory() {
-        for (int i = 0; i < Constant.DEFAULT_SEARCH_CATEGORIES.length; i++) {
-            Category category = new Category(Constant.DEFAULT_SEARCH_CATEGORIES[i],
-                    Constant.DEFAULT_SEARCH_CATEGORY_IMAGES[i]);
-            mCategories.add(category);
+    public void showCategory(List<Category> categories) {
+        if (categories == null) {
+            return;
         }
+        mCategories.clear();
+        mCategories.addAll(categories);
+        notifyDataSetChanged();
     }
     //========================================================
 

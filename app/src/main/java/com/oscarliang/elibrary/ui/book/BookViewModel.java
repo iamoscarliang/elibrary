@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
-import com.oscarliang.elibrary.model.Book;
+import com.oscarliang.elibrary.vo.Book;
 import com.oscarliang.elibrary.repository.BookRepository;
 import com.oscarliang.elibrary.util.AbsentLiveData;
 import com.oscarliang.elibrary.vo.Resource;

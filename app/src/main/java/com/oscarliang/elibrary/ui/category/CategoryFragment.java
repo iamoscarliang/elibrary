@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
@@ -15,7 +14,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.oscarliang.elibrary.R;
-import com.oscarliang.elibrary.model.Category;
+import com.oscarliang.elibrary.vo.Category;
+import com.oscarliang.elibrary.util.Constant;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CategoryFragment extends Fragment implements CategoryAdapter.OnCategoryClickListener {
 
@@ -35,7 +38,7 @@ public class CategoryFragment extends Fragment implements CategoryAdapter.OnCate
     // Overriding methods
     //--------------------------------------------------------
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
@@ -60,6 +63,7 @@ public class CategoryFragment extends Fragment implements CategoryAdapter.OnCate
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycle_view_category);
         initSearchView();
         initRecyclerView();
+        initCategory();
     }
 
     @Override
@@ -91,6 +95,16 @@ public class CategoryFragment extends Fragment implements CategoryAdapter.OnCate
         mAdapter = new CategoryAdapter(this);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+    }
+
+    private void initCategory() {
+        List<Category> categories = new ArrayList<>();
+        for (int i = 0; i < Constant.DEFAULT_SEARCH_CATEGORIES.length; i++) {
+            Category category = new Category(Constant.DEFAULT_SEARCH_CATEGORIES[i],
+                    Constant.DEFAULT_SEARCH_CATEGORY_IMAGES[i]);
+            categories.add(category);
+        }
+        mAdapter.showCategory(categories);
     }
 
     private void navigateBookFragment(String query) {

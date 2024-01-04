@@ -2,7 +2,7 @@ package com.oscarliang.elibrary.api;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.oscarliang.elibrary.model.Book;
+import com.oscarliang.elibrary.vo.Book;
 
 import java.util.List;
 

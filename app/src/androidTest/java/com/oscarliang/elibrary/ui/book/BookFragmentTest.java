@@ -28,7 +28,7 @@ import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.oscarliang.elibrary.R;
-import com.oscarliang.elibrary.model.Book;
+import com.oscarliang.elibrary.vo.Book;
 import com.oscarliang.elibrary.util.RecyclerViewMatcher;
 import com.oscarliang.elibrary.util.TestUtil;
 import com.oscarliang.elibrary.util.ViewModelUtil;

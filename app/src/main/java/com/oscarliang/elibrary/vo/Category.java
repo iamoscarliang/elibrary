@@ -1,4 +1,4 @@
-package com.oscarliang.elibrary.model;
+package com.oscarliang.elibrary.vo;
 
 public class Category {
 

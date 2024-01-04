@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.oscarliang.elibrary.model.Book;
+import com.oscarliang.elibrary.vo.Book;
 import com.oscarliang.elibrary.util.LiveDataTestUtil;
 import com.oscarliang.elibrary.util.TestUtil;
 

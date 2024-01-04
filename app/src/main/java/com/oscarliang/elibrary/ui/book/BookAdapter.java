@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.oscarliang.elibrary.R;
-import com.oscarliang.elibrary.model.Book;
+import com.oscarliang.elibrary.vo.Book;
 import com.oscarliang.elibrary.ui.common.GenericViewHolder;
 
 import java.util.ArrayList;
@@ -123,16 +123,22 @@ public class BookAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     //--------------------------------------------------------
     // Methods
     //--------------------------------------------------------
-    public void showBooks(List<Book> books) {
+    public void showBook(List<Book> books) {
+        if (books == null) {
+            return;
+        }
         mBooks.clear();
         mBooks.addAll(books);
+        notifyDataSetChanged();
+    }
+
+    public void updateState(List<Book> books) {
         // Update last item state
-        if (books.size() < 10) {
+        if (books.size() == mBooks.size()) {
             mLastItemState = LastItemState.EXHAUSTED;
         } else {
             mLastItemState = LastItemState.LOADING;
         }
-        notifyDataSetChanged();
     }
 
     public void showError() {

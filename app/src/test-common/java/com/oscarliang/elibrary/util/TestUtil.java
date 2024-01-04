@@ -1,8 +1,8 @@
 package com.oscarliang.elibrary.util;
 
-import com.oscarliang.elibrary.model.Book;
-import com.oscarliang.elibrary.model.ImageLinks;
-import com.oscarliang.elibrary.model.VolumeInfo;
+import com.oscarliang.elibrary.vo.Book;
+import com.oscarliang.elibrary.vo.ImageLinks;
+import com.oscarliang.elibrary.vo.VolumeInfo;
 
 import java.util.ArrayList;
 import java.util.List;

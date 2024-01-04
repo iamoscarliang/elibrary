@@ -1,4 +1,4 @@
-package com.oscarliang.elibrary.model;
+package com.oscarliang.elibrary.vo;
 
 import android.os.Parcel;
 import android.os.Parcelable;

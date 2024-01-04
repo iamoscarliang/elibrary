@@ -15,7 +15,7 @@ import com.oscarliang.elibrary.api.ApiResponse;
 import com.oscarliang.elibrary.api.BookResponse;
 import com.oscarliang.elibrary.api.BookService;
 import com.oscarliang.elibrary.db.BookDao;
-import com.oscarliang.elibrary.model.Book;
+import com.oscarliang.elibrary.vo.Book;
 import com.oscarliang.elibrary.util.AbsentLiveData;
 import com.oscarliang.elibrary.util.TestUtil;
 import com.oscarliang.elibrary.vo.Resource;
