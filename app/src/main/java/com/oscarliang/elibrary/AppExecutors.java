@@ -12,15 +12,22 @@ import javax.inject.Singleton;
 @Singleton
 public class AppExecutors {
 
-    private final Executor mDiskIO = Executors.newSingleThreadExecutor();
-    private final Executor mNetworkIO = Executors.newFixedThreadPool(3);
-    private final Executor mMainThreadExecutor = new MainThreadExecutor();
+    private final Executor mDiskIO;
+    private final Executor mNetworkIO;
+    private final Executor mMainThreadExecutor;
 
     //--------------------------------------------------------
     // Constructors
     //--------------------------------------------------------
+    public AppExecutors(Executor diskIO, Executor networkIO, Executor mainThreadExecutor) {
+        mDiskIO = diskIO;
+        mNetworkIO = networkIO;
+        mMainThreadExecutor = mainThreadExecutor;
+    }
+
     @Inject
     public AppExecutors() {
+        this(Executors.newSingleThreadExecutor(), Executors.newFixedThreadPool(3), new MainThreadExecutor());
     }
     //========================================================
 

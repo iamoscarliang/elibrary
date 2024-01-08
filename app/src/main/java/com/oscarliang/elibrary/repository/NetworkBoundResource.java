@@ -66,7 +66,7 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
 
     private void fetchFromNetwork(LiveData<ResultType> dbSource) {
 
-        // Update LiveData to loading state
+        // We re-attach dbSource as a new source, it will dispatch its latest value quickly
         mResult.addSource(dbSource, new Observer<ResultType>() {
             @Override
             public void onChanged(ResultType newData) {
@@ -76,7 +76,6 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
 
         // Observe LiveData source from api call
         final LiveData<ApiResponse<RequestType>> apiResponse = createCall();
-
         mResult.addSource(apiResponse, new Observer<ApiResponse<RequestType>>() {
             @Override
             public void onChanged(ApiResponse<RequestType> response) {
@@ -94,6 +93,9 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
                             mAppExecutors.mainThread().execute(new Runnable() {
                                 @Override
                                 public void run() {
+                                    // We specially request a new live data,
+                                    // otherwise we will get immediately last cached value,
+                                    // which may not be updated with latest results received from network
                                     mResult.addSource(loadFromDb(), new Observer<ResultType>() {
                                         @Override
                                         public void onChanged(ResultType newData) {
@@ -117,6 +119,7 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
                         }
                     });
                 } else if (response instanceof ApiResponse.ApiErrorResponse) {
+                    onFetchFailed();
                     mResult.addSource(dbSource, new Observer<ResultType>() {
                         @Override
                         public void onChanged(ResultType newData) {
@@ -152,6 +155,9 @@ public abstract class NetworkBoundResource<ResultType, RequestType> {
 
     @MainThread
     protected abstract LiveData<ApiResponse<RequestType>> createCall();
+
+    protected void onFetchFailed() {
+    }
     //========================================================
 
 }

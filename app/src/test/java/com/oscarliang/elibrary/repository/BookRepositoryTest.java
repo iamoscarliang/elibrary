@@ -10,14 +10,14 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
-import com.oscarliang.elibrary.AppExecutors;
 import com.oscarliang.elibrary.api.ApiResponse;
 import com.oscarliang.elibrary.api.BookResponse;
 import com.oscarliang.elibrary.api.BookService;
 import com.oscarliang.elibrary.db.BookDao;
-import com.oscarliang.elibrary.vo.Book;
 import com.oscarliang.elibrary.util.AbsentLiveData;
+import com.oscarliang.elibrary.util.InstantAppExecutors;
 import com.oscarliang.elibrary.util.TestUtil;
+import com.oscarliang.elibrary.vo.Book;
 import com.oscarliang.elibrary.vo.Resource;
 
 import org.junit.Before;
@@ -43,7 +43,7 @@ public class BookRepositoryTest {
     public void init() {
         mDao = mock(BookDao.class);
         mService = mock(BookService.class);
-        mRepository = new BookRepository(mock(AppExecutors.class), mDao, mService);
+        mRepository = new BookRepository(new InstantAppExecutors(), mDao, mService);
     }
 
     @Test
